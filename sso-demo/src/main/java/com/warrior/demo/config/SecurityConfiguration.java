@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import com.warrior.demo.security.JwtTokenFilter;
-import com.warrior.demo.security.TokenProvider;
 import com.warrior.demo.security.shiro.ShiroRealm;
 
 /**
@@ -49,12 +48,12 @@ public class SecurityConfiguration {
 	}
 
 	@Bean("shiroFilter")
-	public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager, TokenProvider tokenProvider) {
+	public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
 		ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
 		// 添加自己的过滤器并且取名为jwt
 		Map<String, Filter> filterMap = new HashMap<>();
-		filterMap.put("jwt", new JwtTokenFilter(tokenProvider));
+		filterMap.put("jwt", new JwtTokenFilter());
 		factoryBean.setFilters(filterMap);
 
 		factoryBean.setSecurityManager(securityManager);

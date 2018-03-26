@@ -20,7 +20,7 @@ public class UserService {
 	 */
 	public User findUser(String login) {
 		if ("warrior".equals(login)) {
-			return new User(1l, login, "123", "ADMIN,USER", "VIEW,EDIT", "WARRIOR", "深圳湾");
+			return new User(1l, login, "123", "admin,user", "view,edit", "Warrior", "深圳湾");
 		} else {
 			return null;
 		}

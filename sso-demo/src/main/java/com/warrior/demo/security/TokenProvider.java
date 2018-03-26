@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.warrior.demo.domain.User;
 
 /**
  * token生成器
@@ -39,13 +41,34 @@ public class TokenProvider {
 	 * @param loginName
 	 * @return
 	 */
-	public String createToken(String loginName) {
+	public String createToken(User user) {
 		try {
 			Date date = new Date(System.currentTimeMillis() + tokenValidityInseconds * 1000);
 			Algorithm algorithm = Algorithm.HMAC256(secretKey);
 			// 附带loginName信息
-			return JWT.create().withClaim("loginName", loginName).withExpiresAt(date).sign(algorithm);
+			return JWT.create().withClaim("id", user.getId()).withClaim("loginName", user.getLogin())
+					.withClaim("roles", user.getRoles()).withClaim("permissions", user.getPermissions())
+					.withExpiresAt(date).sign(algorithm);
 		} catch (UnsupportedEncodingException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * 获取token里面的用户信息（只是部分信息）
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public User getUser(String token) {
+		try {
+			DecodedJWT jwt = JWT.decode(token);
+			Long id = jwt.getClaim("id").asLong();
+			String login = jwt.getClaim("loginName").asString();
+			String roles = jwt.getClaim("roles").asString();
+			String permissions = jwt.getClaim("permissions").asString();
+			return new User(id, login, null, roles, permissions, null, null);
+		} catch (JWTDecodeException e) {
 			return null;
 		}
 	}

@@ -8,7 +8,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.warrior.demo.domain.User;
-import com.warrior.demo.service.UserService;
+import com.warrior.demo.security.TokenProvider;
 
 /**
  * 自定义Realm
@@ -27,8 +26,17 @@ import com.warrior.demo.service.UserService;
 @Service
 public class ShiroRealm extends AuthorizingRealm {
 
+	// @Autowired
+	// private UserService userService;
+
 	@Autowired
-	private UserService userService;
+	private TokenProvider tokenProvider;
+
+	@Override
+	public boolean supports(AuthenticationToken token) {
+		// 仅支持JwtToken类型的Token
+		return token instanceof JwtToken;
+	}
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -47,13 +55,16 @@ public class ShiroRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
-		String login = usernamePasswordToken.getUsername();
-		User user = userService.findUser(login);
-		if (user == null) {
-			throw new AuthenticationException("User didn't existed!");
+		JwtToken jwt = (JwtToken) token;
+		String jwtToken = jwt.getPrincipal().toString();
+		if (!tokenProvider.validateToken(jwtToken)) {
+			throw new AuthenticationException("token invalid");
 		}
-		return new SimpleAuthenticationInfo(user, user.getPassword(), "ShiroRealm");
+		User user = tokenProvider.getUser(jwtToken);
+		if (user == null) {
+			throw new AuthenticationException("token");
+		}
+		return new SimpleAuthenticationInfo(user, jwtToken, "ShiroRealm");
 	}
 
 }
