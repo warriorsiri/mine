@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.apache.shiro.web.util.WebUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.warrior.demo.constant.ServiceCode;

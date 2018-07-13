@@ -46,4 +46,9 @@ public class TestController {
 	public RespData requirePermission() {
 		return new RespData(200, "You are visiting permission require edit,view", null);
 	}
+
+	@GetMapping("/testex")
+	public RespData testex() {
+		throw new RuntimeException("测试异常！");
+	}
 }
