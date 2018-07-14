@@ -7,14 +7,14 @@ import com.warrior.crawler.config.AppConfig;
 import com.warrior.crawler.target.FieldFilter;
 
 /**
- * 工业增加值同比
+ * 利润总额同比
  * 
  * @author warrior
  * 2018年7月13日
  */
-public class ZjzTbFilter implements FieldFilter {
+public class LrzeTbFilter implements FieldFilter {
 
-	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u589e\\u52a0\\u503c){1}\\S*?("
+	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u5229\\u6da6){1}\\S*?("
 			+ AppConfig.YOY_MODIFIER + "){1}(\\d+\\.?\\d*)";
 	public final static Pattern PATTERN = Pattern.compile(REGEX);
 
@@ -25,12 +25,12 @@ public class ZjzTbFilter implements FieldFilter {
 
 	@Override
 	public String getColName() {
-		return "工业增加值_同比";
+		return "利润总额_同比";
 	}
 
 	@Override
 	public String keyName() {
-		return "ZJZ_TB";
+		return "LRZE_TB";
 	}
 
 	@Override

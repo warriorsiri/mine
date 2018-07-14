@@ -71,7 +71,7 @@ public class TjcnCrawler {
 
 			findTargetUrl(targets, provinceUrl, province, addStr, minYear, maxYear);
 		}
-		System.out.println("数据完毕，开始生成excel……");
+		System.out.println("数据抓取完毕，开始生成excel……");
 		// System.out.println(targets);
 		List<Map<String, String>> results = new ArrayList<>();
 		for (Tuple item : targets) {
@@ -104,13 +104,13 @@ public class TjcnCrawler {
 
 		// 第二行 单位
 		HSSFRow row2 = sheet.createRow(1);
-		int fieldSize = AppConfig.fliters.size();
+		int fieldSize = AppConfig.getFilters().size();
 		for (int i = 0; i < 3 + fieldSize; i++) {
 			HSSFCell tc = row2.createCell(i);
 			if (i < 3) {
 				tc.setCellValue("d");
 			} else {
-				tc.setCellValue(AppConfig.fliters.get(i - 3).getUnit());
+				tc.setCellValue(AppConfig.getFilters().get(i - 3).getUnit());
 			}
 		}
 
@@ -120,7 +120,7 @@ public class TjcnCrawler {
 		row3.createCell(1).setCellValue("城报年月");
 		row3.createCell(2).setCellValue("城报企业规模");
 		for (int i = 0; i < fieldSize; i++) {
-			row3.createCell(i + 3).setCellValue(AppConfig.fliters.get(i).getColName());
+			row3.createCell(i + 3).setCellValue(AppConfig.getFilters().get(i).getColName());
 		}
 
 		// 数值
@@ -131,7 +131,7 @@ public class TjcnCrawler {
 			row.createCell(1).setCellValue(item.get("YEAR"));
 			row.createCell(2).setCellValue(item.get("CBGM"));
 			int j = 0;
-			for (FieldFilter filter : AppConfig.fliters) {
+			for (FieldFilter filter : AppConfig.getFilters()) {
 				row.createCell(j + 3).setCellValue(item.getOrDefault(filter.keyName(), ""));
 				j++;
 			}
@@ -172,7 +172,7 @@ public class TjcnCrawler {
 		Elements divs = doc.getElementsByClass("xwnr").select("div");
 
 		for (Element div : divs) {
-			for (FieldFilter fileter : AppConfig.fliters) {
+			for (FieldFilter fileter : AppConfig.getFilters()) {
 				if (!result.containsKey(fileter.keyName())) { // 前面已经找到，后面就不再匹配
 					String value = fileter.extractValue(div.html());
 					if (value != null) {
@@ -180,7 +180,7 @@ public class TjcnCrawler {
 						result.put("YEAR", year);
 						result.put("CBGM", "规模以上");
 						result.put(fileter.keyName(), value);
-						if (result.size() == (AppConfig.fliters.size() + 3)) { // 所有值已经填充，不需要往下找
+						if (result.size() == (AppConfig.getFilters().size() + 3)) { // 所有值已经填充，不需要往下找
 							return;
 						}
 					}

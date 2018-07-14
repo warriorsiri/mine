@@ -73,7 +73,7 @@ public class ZjzTbRegTest {
 		for (Tuple cond : conds) {
 			String content = cond.get(0);
 			String expect = cond.get(1);
-			Assert.assertEquals("增加值提取不正确--" + content, expect, filter.extractValue(content));
+			Assert.assertEquals("数值提取不正确--" + content, expect, filter.extractValue(content));
 		}
 	}
 
