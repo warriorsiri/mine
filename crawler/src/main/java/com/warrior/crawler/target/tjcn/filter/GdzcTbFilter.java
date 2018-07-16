@@ -3,46 +3,48 @@ package com.warrior.crawler.target.tjcn.filter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.warrior.crawler.config.AppConfig;
 import com.warrior.crawler.target.FieldFilter;
 
 /**
- * 主营业务收入提取过滤器
+ * 固定资产提取过滤器
  * 
  * @author warrior
  * 2018年7月13日
  */
-public class ZysrFilter implements FieldFilter {
+public class GdzcTbFilter implements FieldFilter {
 
-	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u4e3b\\u8425\\u4e1a\\u52a1\\u6536\\u5165){1}\\S*?(\\d+\\.?\\d*){1}(%)*";
+	public final static String REGEX = "\\S*?\u5de5\u4e1a\u6295\u8d44\\S*?(" + AppConfig.YOY_MODIFIER
+			+ "){1}(\\d+\\.?\\d*)";
 	public final static Pattern PATTERN = Pattern.compile(REGEX);
 
 	@Override
 	public String getUnit() {
-		return "亿元";
+		return "%";
 	}
 
 	@Override
 	public String getColName() {
-		return "主营业务收入";
+		return "固定资产投入_同比";
 	}
 
 	@Override
 	public String keyName() {
-		return "ZYYWSR";
+		return "GDZC_TB";
 	}
 
 	@Override
 	public String extractValue(String content) {
 		Matcher matcher = PATTERN.matcher(content);
+		String value = null;
+		String ud = null;
 		if (matcher.find()) {
-			String ec = matcher.group(0);
-			if (ec.indexOf("每百元") >= 0) {
-				return null;
+			ud = matcher.group(1);
+			value = matcher.group(2);
+			if (AppConfig.isNegative(ud)) {
+				return "-" + value;
 			}
-			if (matcher.group(3) != null) {
-				return null;
-			}
-			return matcher.group(2);
+			return value;
 		}
 		return null;
 	}

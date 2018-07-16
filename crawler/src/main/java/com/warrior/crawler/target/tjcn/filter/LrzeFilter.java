@@ -1,8 +1,9 @@
 package com.warrior.crawler.target.tjcn.filter;
 
-import com.warrior.crawler.target.FieldFilter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import cn.hutool.core.util.ReUtil;
+import com.warrior.crawler.target.FieldFilter;
 
 /**
  * 利润总额提取过滤器
@@ -12,7 +13,8 @@ import cn.hutool.core.util.ReUtil;
  */
 public class LrzeFilter implements FieldFilter {
 
-	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u5229\\u6da6){1}\\S*?(\\d+\\.?\\d*)";
+	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u5229\\u6da6){1}\\S*?(\\d+\\.?\\d*){1}(%)*";
+	public final static Pattern PATTERN = Pattern.compile(REGEX);
 
 	@Override
 	public String getUnit() {
@@ -31,7 +33,14 @@ public class LrzeFilter implements FieldFilter {
 
 	@Override
 	public String extractValue(String content) {
-		return ReUtil.get(REGEX, content, 2);
+		Matcher matcher = PATTERN.matcher(content);
+		if (matcher.find()) {
+			if (matcher.group(3) != null) {
+				return null;
+			}
+			return matcher.group(2);
+		}
+		return null;
 	}
 
 }

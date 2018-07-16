@@ -4,8 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.warrior.crawler.target.FieldFilter;
+import com.warrior.crawler.target.tjcn.filter.GdzcFilter;
+import com.warrior.crawler.target.tjcn.filter.GdzcTbFilter;
+import com.warrior.crawler.target.tjcn.filter.LrzeFilter;
+import com.warrior.crawler.target.tjcn.filter.LrzeTbFilter;
+import com.warrior.crawler.target.tjcn.filter.LszeFilter;
+import com.warrior.crawler.target.tjcn.filter.LszeTbFilter;
 import com.warrior.crawler.target.tjcn.filter.ZjzFilter;
 import com.warrior.crawler.target.tjcn.filter.ZjzTbFilter;
+import com.warrior.crawler.target.tjcn.filter.ZysrFilter;
+import com.warrior.crawler.target.tjcn.filter.ZysrTbFilter;
 
 /**
  * 程序配置
@@ -23,6 +31,15 @@ public class AppConfig {
 	static {
 		fliters.add(new ZjzFilter());
 		fliters.add(new ZjzTbFilter());
+		fliters.add(new ZysrFilter());
+		fliters.add(new ZysrTbFilter());
+		fliters.add(new LrzeFilter());
+		fliters.add(new LrzeTbFilter());
+		fliters.add(new LszeFilter());
+		fliters.add(new LszeTbFilter());
+		fliters.add(new GdzcFilter());
+		fliters.add(new GdzcTbFilter());
+
 	}
 
 	public static List<FieldFilter> getFilters() {

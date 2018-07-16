@@ -6,14 +6,14 @@ import java.util.regex.Pattern;
 import com.warrior.crawler.target.FieldFilter;
 
 /**
- * 主营业务收入提取过滤器
+ * 利税总额提取过滤器
  * 
  * @author warrior
  * 2018年7月13日
  */
-public class ZysrFilter implements FieldFilter {
+public class LszeFilter implements FieldFilter {
 
-	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u4e3b\\u8425\\u4e1a\\u52a1\\u6536\\u5165){1}\\S*?(\\d+\\.?\\d*){1}(%)*";
+	public final static String REGEX = "\\S*?\\u89c4\\u6a21\\u4ee5\\u4e0a\\u5de5\\u4e1a\\S*?(\\u5229\\u7a0e|\\u7a0e\\u91d1){1}\\S*?(\\d+\\.?\\d*){1}(%)*";
 	public final static Pattern PATTERN = Pattern.compile(REGEX);
 
 	@Override
@@ -23,22 +23,18 @@ public class ZysrFilter implements FieldFilter {
 
 	@Override
 	public String getColName() {
-		return "主营业务收入";
+		return "利税总额";
 	}
 
 	@Override
 	public String keyName() {
-		return "ZYYWSR";
+		return "LSZE";
 	}
 
 	@Override
 	public String extractValue(String content) {
 		Matcher matcher = PATTERN.matcher(content);
 		if (matcher.find()) {
-			String ec = matcher.group(0);
-			if (ec.indexOf("每百元") >= 0) {
-				return null;
-			}
 			if (matcher.group(3) != null) {
 				return null;
 			}

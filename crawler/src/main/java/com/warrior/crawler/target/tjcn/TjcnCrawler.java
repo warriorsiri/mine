@@ -50,10 +50,12 @@ public class TjcnCrawler {
 	 * 年份
 	 * @param path
 	 * excel保存路径
+	 * @param dealPro
+	 * 是否抓取省数据
 	 * @throws Exception
 	 */
-	public void crawler(String addrs, String year, String path) throws Exception {
-		System.out.println("人工智能赵帅2.0开始抓取数据……");
+	public void crawler(String addrs, String year, String path, boolean dealPro) throws Exception {
+		System.out.println("人工智能赵帅2.1开始抓取数据……");
 		Document doc = Jsoup.connect(MAIN_URL).get();
 		Elements atags = doc.getElementsByClass("zlm").select("a");
 
@@ -67,11 +69,15 @@ public class TjcnCrawler {
 			JSONObject pObj = addrArray.getJSONObject(i);
 			String province = pObj.getString("porvince");
 			String provinceUrl = findProvinceUrl(atags, province);
-			List<String> addStr = getAddrStr(pObj);
+			// 找省的目标地址
+			if (dealPro) {
+				findProTargetUrl(targets, provinceUrl, province, minYear, maxYear);
+			}
 
-			findTargetUrl(targets, provinceUrl, province, addStr, minYear, maxYear);
+			// 找市的目标地址
+			List<String> addStr = getCityAddrStr(pObj);
+			findCityTargetUrl(targets, provinceUrl, province, addStr, minYear, maxYear);
 		}
-		System.out.println("数据抓取完毕，开始生成excel……");
 		// System.out.println(targets);
 		List<Map<String, String>> results = new ArrayList<>();
 		for (Tuple item : targets) {
@@ -84,9 +90,36 @@ public class TjcnCrawler {
 				results.add(result);
 			}
 		}
+		System.out.println("数据抓取完毕，开始生成excel……");
 		// System.out.println(results);
 		String filePath = createExcel(results, path);
 		System.out.println("Excel生成成功，文件地址：" + filePath);
+	}
+
+	private void findProTargetUrl(List<Tuple> targets, String provinceUrl, String province, Integer minYear,
+			Integer maxYear) throws IOException {
+		Document doc = Jsoup.connect(provinceUrl).get();
+		Elements alinks = doc.getElementsByClass("box").get(0).select("li > a");
+
+		for (Element a : alinks) {
+			String targetName = getTargetName(a.attr("title"));
+			if (province.equals(targetName)) {
+				Integer year = getYear(a.attr("title"));
+				if (year < minYear) {
+					return;
+				}
+				if (year != null && year >= minYear && year <= maxYear) {
+					Tuple target = new Tuple(province, year + "年", MAIN + a.attr("href"));
+					targets.add(target);
+				}
+			}
+		}
+
+		String nextPageUrl = getNextPage(doc.getElementsByClass("epages").select("a"));
+		if (nextPageUrl != null) {
+			findProTargetUrl(targets, nextPageUrl, province, minYear, maxYear);
+		}
+
 	}
 
 	private String createExcel(List<Map<String, String>> results, String path) {
@@ -193,9 +226,8 @@ public class TjcnCrawler {
 		}
 	}
 
-	private List<String> getAddrStr(JSONObject pObj) {
+	private List<String> getCityAddrStr(JSONObject pObj) {
 		List<String> strs = new ArrayList<>();
-		// strs.add(pObj.getString("porvince")); 省先不要
 		JSONArray citys = pObj.getJSONArray("city");
 		strs.addAll(citys.toJavaList(String.class));
 		return strs;
@@ -213,7 +245,7 @@ public class TjcnCrawler {
 	 * @param maxYear
 	 * @throws IOException
 	 */
-	private void findTargetUrl(List<Tuple> targets, String provinceUrl, String province, List<String> addStr,
+	private void findCityTargetUrl(List<Tuple> targets, String provinceUrl, String province, List<String> addStr,
 			Integer minYear, Integer maxYear) throws IOException {
 		Document doc = Jsoup.connect(provinceUrl).get();
 		Elements alinks = doc.getElementsByClass("box").get(0).select("li > a");
@@ -226,7 +258,7 @@ public class TjcnCrawler {
 		if (lastYear > maxYear) { // 最后一条数据的年份已经不在范围内，下一页
 			String nextPageUrl = getNextPage(doc.getElementsByClass("epages").select("a"));
 			if (nextPageUrl != null) {
-				findTargetUrl(targets, nextPageUrl, province, addStr, minYear, maxYear);
+				findCityTargetUrl(targets, nextPageUrl, province, addStr, minYear, maxYear);
 			}
 			return;
 		}
@@ -243,7 +275,7 @@ public class TjcnCrawler {
 		}
 		String nextPageUrl = getNextPage(doc.getElementsByClass("epages").select("a"));
 		if (nextPageUrl != null) {
-			findTargetUrl(targets, nextPageUrl, province, addStr, minYear, maxYear);
+			findCityTargetUrl(targets, nextPageUrl, province, addStr, minYear, maxYear);
 		}
 	}
 
