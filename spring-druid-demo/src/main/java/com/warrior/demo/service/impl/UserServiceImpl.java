@@ -1,5 +1,7 @@
 package com.warrior.demo.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +23,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		baseMapper.insert(u1);
 
 		User u2 = new User();
-		u2.setAge(1111111111);
+		u2.setAge(12);
 		u2.setEmail("test33333333");
 		u2.setName("哈哈3333333333");
 		baseMapper.insert(u2);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<User> selectList() {
+		return baseMapper.selectList(null);
 	}
 
 }

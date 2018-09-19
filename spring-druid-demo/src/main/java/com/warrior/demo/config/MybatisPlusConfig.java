@@ -29,4 +29,5 @@ public class MybatisPlusConfig {
 	public PerformanceInterceptor performanceInterceptor() {
 		return new PerformanceInterceptor();
 	}
+
 }

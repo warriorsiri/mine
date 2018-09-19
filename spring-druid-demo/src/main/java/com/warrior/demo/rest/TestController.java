@@ -24,7 +24,7 @@ public class TestController {
 
 	@RequestMapping(value = "select", method = RequestMethod.GET)
 	public List<User> select() {
-		List<User> list = userService.list(null);
+		List<User> list = userService.selectList();
 		System.out.println(list);
 		return list;
 	}
