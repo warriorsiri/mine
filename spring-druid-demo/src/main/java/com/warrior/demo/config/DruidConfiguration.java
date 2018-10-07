@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -18,16 +16,13 @@ import org.springframework.context.annotation.Primary;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.warrior.demo.common.DataSourceContextHolder;
 import com.warrior.demo.common.MultipleDataSources;
 
 /**
  * DataSource 的配置不能写到MybatisPlusConfig里面，和MapperScannerConfigurer冲突
  * 
- * @author warrior
- * 2018年9月19日
+ * @author warrior 2018年9月19日
  */
 @Configuration
 public class DruidConfiguration {
@@ -107,24 +102,29 @@ public class DruidConfiguration {
 		return multipleDataSource;
 	}
 
-	@Bean("sqlSessionFactory")
-	public SqlSessionFactory sqlSessionFactory() throws Exception {
-		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-		sqlSessionFactory.setDataSource(multipleDataSource(master(), slave()));
-
-		MybatisConfiguration configuration = new MybatisConfiguration();
-		// configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-		configuration.setJdbcTypeForNull(JdbcType.NULL);
-		configuration.setMapUnderscoreToCamelCase(true);
-		configuration.setCacheEnabled(false);
-		sqlSessionFactory.setConfiguration(configuration);
-		// sqlSessionFactory.setPlugins(new Interceptor[] { //
-		// PerformanceInterceptor(),OptimisticLockerInterceptor()
-		// paginationInterceptor() // 添加分页功能
-		// });
-		// sqlSessionFactory.setGlobalConfig(globalConfiguration());
-		return sqlSessionFactory.getObject();
-	}
+	/**
+	 * 使用mybatis plus不需要自定义sqlsessionFactory，如果自定义的话，将会失去mybatis-plus的自动配置功能
+	 */
+	// @Bean("sqlSessionFactory")
+	// public SqlSessionFactory sqlSessionFactory() throws Exception {
+	// MybatisSqlSessionFactoryBean sqlSessionFactory = new
+	// MybatisSqlSessionFactoryBean();
+	// sqlSessionFactory.setDataSource(multipleDataSource(master(), slave()));
+	//
+	// MybatisConfiguration configuration = new MybatisConfiguration();
+	// //
+	// configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+	// configuration.setJdbcTypeForNull(JdbcType.NULL);
+	// configuration.setMapUnderscoreToCamelCase(true);
+	// configuration.setCacheEnabled(false);
+	// sqlSessionFactory.setConfiguration(configuration);
+	// // sqlSessionFactory.setPlugins(new Interceptor[] { //
+	// // PerformanceInterceptor(),OptimisticLockerInterceptor()
+	// // paginationInterceptor() // 添加分页功能
+	// // });
+	// // sqlSessionFactory.setGlobalConfig(globalConfiguration());
+	// return sqlSessionFactory.getObject();
+	// }
 
 	// @Bean 使用方法aop来切换数据源
 	// public DataSourceTransactionManager

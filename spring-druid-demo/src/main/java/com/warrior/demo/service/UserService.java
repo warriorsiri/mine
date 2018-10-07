@@ -10,4 +10,5 @@ public interface UserService extends IService<User> {
 	public void testTranscation();
 
 	public List<User> selectList();
+
 }

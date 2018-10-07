@@ -4,6 +4,7 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 
 @Configuration
@@ -28,6 +29,12 @@ public class MybatisPlusConfig {
 	@Bean
 	public PerformanceInterceptor performanceInterceptor() {
 		return new PerformanceInterceptor();
+	}
+
+	@Bean
+	public PaginationInterceptor paginationInterceptor() {
+		PaginationInterceptor page = new PaginationInterceptor();
+		return page;
 	}
 
 }
